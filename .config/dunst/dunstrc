@@ -1,0 +1,8 @@
+[spotify]
+    appname = "Spotify"
+    summary = "*"
+    urgency = low
+    format = ""
+    timeout = 0
+    ignore = yes
+
