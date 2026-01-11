@@ -72,6 +72,7 @@ command -v trash-put &>/dev/null && alias rm='trash-put' && alias trash='trash-l
 command -v fastfetch &>/dev/null && alias ff='fastfetch'
 command -v lazygit &>/dev/null && alias lg='lazygit'
 command -v lazydocker &>/dev/null && alias lzd='lazydocker'
+command -v kitty &>/dev/null && alias icat='kitty icat'
 command -v ncdu &>/dev/null && alias diskuse='ncdu'
 command -v baobab &>/dev/null && alias diskgui='baobab'
 command -v ranger &>/dev/null && alias r='ranger'
