@@ -126,6 +126,7 @@ Configured in `.bash_aliases`. Conditional aliases only activate when the tool i
 | `lg` | lazygit | TUI for git |
 | `lzd` | lazydocker | TUI for docker |
 | `ff` | fastfetch | System info |
+| `icat` | kitty icat | Display images in terminal |
 | `r` | ranger | File manager |
 | `n` | nnn | Lightweight file manager |
 | `help` | tldr | Simplified man pages |
