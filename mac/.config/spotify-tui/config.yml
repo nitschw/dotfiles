@@ -1,0 +1,53 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                    Spotify TUI Configuration                   ║
+# ╚════════════════════════════════════════════════════════════════╝
+
+# Mutlidevice support - if true allows control of Spotify on other devices
+behavior_mode: full
+
+# Theme (Catppuccin Mocha inspired)
+theme:
+  active: Cyan
+  banner: Magenta
+  error_border: Red
+  error_text: Red
+  hint: Yellow
+  hovered: Magenta
+  inactive: Gray
+  playbar_background: Black
+  playbar_progress: Cyan
+  playbar_progress_text: White
+  playbar_text: White
+  selected: Cyan
+  text: White
+  header: Magenta
+
+# Keybindings (vim-style)
+keybindings:
+  # Navigation
+  back: "q"
+  jump_to_album: "a"
+  jump_to_artist_album: "A"
+  jump_to_context: "o"
+  jump_to_start: "g g"
+  jump_to_end: "G"
+  
+  # Playback
+  decrease_volume: "-"
+  increase_volume: "+"
+  next_track: "n"
+  previous_track: "p"
+  seek_backwards: "h"
+  seek_forwards: "l"
+  toggle_playback: "space"
+  toggle_shuffle: "s"
+  toggle_repeat: "r"
+  
+  # Library
+  add_item_to_queue: "z"
+  copy_song_url: "c"
+  copy_album_url: "C"
+  
+  # Search
+  search: "/"
+  submit: "Enter"

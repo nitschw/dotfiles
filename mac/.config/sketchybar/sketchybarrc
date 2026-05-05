@@ -1,0 +1,213 @@
+#!/bin/bash
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                    SketchyBar Configuration                    ║
+# ║              Polybar-like status bar for macOS                 ║
+# ╚════════════════════════════════════════════════════════════════╝
+
+PLUGIN_DIR="$HOME/.config/sketchybar/plugins"
+
+# Colors (Catppuccin Mocha)
+export BLACK=0xff1e1e2e
+export WHITE=0xffcdd6f4
+export RED=0xfff38ba8
+export GREEN=0xffa6e3a1
+export BLUE=0xff89b4fa
+export YELLOW=0xfff9e2af
+export ORANGE=0xfffab387
+export MAGENTA=0xffcba6f7
+export CYAN=0xff94e2d5
+export PINK=0xfff5c2e7
+export SURFACE0=0xff313244
+export SURFACE1=0xff45475a
+
+# Bar appearance
+# Note: margin and y_offset position bar below macOS menu bar area
+# AeroSpace outer.top gap handles the actual window spacing
+sketchybar --bar \
+    height=32 \
+    blur_radius=30 \
+    position=top \
+    sticky=on \
+    padding_left=10 \
+    padding_right=10 \
+    color=$BLACK \
+    shadow=on \
+    display=all
+
+# Default item properties
+sketchybar --default \
+    icon.font="JetBrainsMono Nerd Font:Bold:14.0" \
+    icon.color=$WHITE \
+    label.font="JetBrainsMono Nerd Font:Regular:13.0" \
+    label.color=$WHITE \
+    padding_left=5 \
+    padding_right=5 \
+    label.padding_left=4 \
+    label.padding_right=4 \
+    icon.padding_left=4 \
+    icon.padding_right=4
+
+# ─────────────────────────────────────────────────────────────────
+# Left side - AeroSpace Workspace + App Info
+# ─────────────────────────────────────────────────────────────────
+
+# AeroSpace workspaces - one item per display so each shows its own workspaces
+sketchybar --add event aerospace_workspace_change
+
+# Display 1 (DELL P2422H) - workspaces 1, 4, 7
+sketchybar --add item aerospace.1 left \
+    --set aerospace.1 \
+        display=1 \
+        icon="" \
+        icon.color=$PINK \
+        label.color=$WHITE \
+        label.font="JetBrainsMono Nerd Font:Bold:14.0" \
+        background.color=$SURFACE0 \
+        background.corner_radius=5 \
+        background.height=24 \
+        background.padding_left=8 \
+        background.padding_right=8 \
+        background.drawing=on \
+        update_freq=1 \
+        script="MONITOR=1 $PLUGIN_DIR/aerospace.sh" \
+    --subscribe aerospace.1 aerospace_workspace_change
+
+# Display 2 (DELL S3422DWG) - workspaces 2, 5, 8
+sketchybar --add item aerospace.2 left \
+    --set aerospace.2 \
+        display=2 \
+        icon="" \
+        icon.color=$PINK \
+        label.color=$WHITE \
+        label.font="JetBrainsMono Nerd Font:Bold:14.0" \
+        background.color=$SURFACE0 \
+        background.corner_radius=5 \
+        background.height=24 \
+        background.padding_left=8 \
+        background.padding_right=8 \
+        background.drawing=on \
+        update_freq=1 \
+        script="MONITOR=2 $PLUGIN_DIR/aerospace.sh" \
+    --subscribe aerospace.2 aerospace_workspace_change
+
+# Display 3 (Built-in Retina) - workspaces 3, 6, 9
+sketchybar --add item aerospace.3 left \
+    --set aerospace.3 \
+        display=3 \
+        icon="" \
+        icon.color=$PINK \
+        label.color=$WHITE \
+        label.font="JetBrainsMono Nerd Font:Bold:14.0" \
+        background.color=$SURFACE0 \
+        background.corner_radius=5 \
+        background.height=24 \
+        background.padding_left=8 \
+        background.padding_right=8 \
+        background.drawing=on \
+        update_freq=1 \
+        script="MONITOR=3 $PLUGIN_DIR/aerospace.sh" \
+    --subscribe aerospace.3 aerospace_workspace_change
+
+# Separator
+sketchybar --add item separator left \
+    --set separator \
+        icon="│" \
+        icon.color=$SURFACE1 \
+        label.drawing=off \
+        padding_left=10 \
+        padding_right=10
+
+# Front app (current window)
+sketchybar --add item front_app left \
+    --set front_app \
+        icon.drawing=off \
+        label.color=$CYAN \
+        script="$PLUGIN_DIR/front_app.sh" \
+    --subscribe front_app front_app_switched
+
+# ─────────────────────────────────────────────────────────────────
+# Center - Now Playing
+# ─────────────────────────────────────────────────────────────────
+
+# Music/Spotify now playing
+sketchybar --add item music center \
+    --set music \
+        icon="" \
+        icon.color=$GREEN \
+        label.color=$WHITE \
+        label.max_chars=45 \
+        scroll_texts=on \
+        update_freq=3 \
+        script="$PLUGIN_DIR/music.sh"
+
+# ─────────────────────────────────────────────────────────────────
+# Right side - System info
+# ─────────────────────────────────────────────────────────────────
+
+# Date/Time
+sketchybar --add item clock right \
+    --set clock \
+        icon="" \
+        icon.color=$MAGENTA \
+        update_freq=30 \
+        script="$PLUGIN_DIR/clock.sh"
+
+# Battery
+sketchybar --add item battery right \
+    --set battery \
+        icon.color=$GREEN \
+        update_freq=120 \
+        script="$PLUGIN_DIR/battery.sh" \
+    --subscribe battery system_woke power_source_change
+
+# WiFi
+sketchybar --add item wifi right \
+    --set wifi \
+        icon="󰖩" \
+        icon.color=$BLUE \
+        update_freq=30 \
+        script="$PLUGIN_DIR/wifi.sh" \
+    --subscribe wifi wifi_change
+
+# Zscaler VPN status
+sketchybar --add item zscaler right \
+    --set zscaler \
+        icon="󰒃" \
+        update_freq=30 \
+        script="$PLUGIN_DIR/zscaler.sh"
+
+# Docker status
+sketchybar --add item docker right \
+    --set docker \
+        icon="󰡨" \
+        update_freq=10 \
+        script="$PLUGIN_DIR/docker.sh"
+
+# Volume
+sketchybar --add item volume right \
+    --set volume \
+        icon.color=$YELLOW \
+        script="$PLUGIN_DIR/volume.sh" \
+    --subscribe volume volume_change
+
+# CPU
+sketchybar --add item cpu right \
+    --set cpu \
+        icon="" \
+        icon.color=$ORANGE \
+        update_freq=5 \
+        script="$PLUGIN_DIR/cpu.sh"
+
+# Memory
+sketchybar --add item memory right \
+    --set memory \
+        icon="󰍛" \
+        icon.color=$CYAN \
+        update_freq=15 \
+        script="$PLUGIN_DIR/memory.sh"
+
+# ─────────────────────────────────────────────────────────────────
+# Initialize
+# ─────────────────────────────────────────────────────────────────
+
+sketchybar --update

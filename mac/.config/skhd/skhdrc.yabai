@@ -1,0 +1,179 @@
+# ====================================================================
+# skhd configuration - matching i3 keybindings
+# Using Alt (Option) as mod key to avoid conflicts with macOS
+# 
+# NOTE: With SIP enabled, workspace switching (Alt+1-9) won't work.
+# Use macOS Mission Control instead: Ctrl+1-9 (native macOS)
+# ====================================================================
+
+# ─────────────────────────────────────────────────────────────────
+# Application Launchers
+# ─────────────────────────────────────────────────────────────────
+
+# Terminal (matching i3: $mod+Return)
+alt - return : open -na "kitty" || open -na "iTerm" || open -na "Terminal"
+
+# Launcher (matching i3: $mod+d for dmenu, $mod+shift+d for rofi)
+alt - d : open -a "Raycast" || open -a "Alfred" || osascript -e 'tell application "System Events" to keystroke space using {command down}'
+
+# ─────────────────────────────────────────────────────────────────
+# Window Management
+# ─────────────────────────────────────────────────────────────────
+
+# Kill window (matching i3: $mod+Shift+q)
+alt + shift - q : yabai -m window --close
+
+# Fullscreen (matching i3: $mod+f)
+alt - f : yabai -m window --toggle zoom-fullscreen
+
+# Toggle floating (matching i3: $mod+Shift+space)
+alt + shift - space : yabai -m window --toggle float
+
+# Toggle focus tiling/floating (matching i3: $mod+space)
+alt - space : yabai -m window --focus recent
+
+# Focus parent (matching i3: $mod+a)
+alt - a : yabai -m window --focus largest
+
+# ─────────────────────────────────────────────────────────────────
+# Focus Movement (matching i3: j/k/l/semicolon)
+# ─────────────────────────────────────────────────────────────────
+
+alt - j : yabai -m window --focus west
+alt - k : yabai -m window --focus south
+alt - l : yabai -m window --focus north
+alt - 0x29 : yabai -m window --focus east  # semicolon keycode
+
+# Arrow keys
+alt - left : yabai -m window --focus west
+alt - down : yabai -m window --focus south
+alt - up : yabai -m window --focus north
+alt - right : yabai -m window --focus east
+
+# ─────────────────────────────────────────────────────────────────
+# Move Windows (matching i3: $mod+Shift+j/k/l/semicolon)
+# ─────────────────────────────────────────────────────────────────
+
+alt + shift - j : yabai -m window --swap west
+alt + shift - k : yabai -m window --swap south
+alt + shift - l : yabai -m window --swap north
+alt + shift - 0x29 : yabai -m window --swap east  # semicolon
+
+# Arrow keys
+alt + shift - left : yabai -m window --swap west
+alt + shift - down : yabai -m window --swap south
+alt + shift - up : yabai -m window --swap north
+alt + shift - right : yabai -m window --swap east
+
+# ─────────────────────────────────────────────────────────────────
+# Splits (matching i3: $mod+h horizontal, $mod+v vertical)
+# Note: Alt+H conflicts with macOS Hide, so using Alt+backslash instead
+# ─────────────────────────────────────────────────────────────────
+
+alt - 0x2A : yabai -m window --insert west  # backslash (horizontal split)
+alt - v : yabai -m window --insert south     # vertical split
+
+# ─────────────────────────────────────────────────────────────────
+# Layouts (matching i3: $mod+e toggle split, $mod+s stacking, $mod+w tabbed)
+# ─────────────────────────────────────────────────────────────────
+
+# Toggle between bsp and float
+alt - e : yabai -m space --layout $(yabai -m query --spaces --space | jq -r 'if .type == "bsp" then "float" else "bsp" end')
+
+# Stack layout (closest to i3 stacking)
+alt - s : yabai -m window --toggle zoom-parent
+
+# Rotate tree (yabai doesn't support tabs, but we can rotate)
+alt - w : yabai -m space --rotate 90
+
+# ─────────────────────────────────────────────────────────────────
+# Monitors - Direct access (Alt+1/2 for monitor switching)
+# ─────────────────────────────────────────────────────────────────
+
+# Focus monitor directly
+ctrl + alt - 1 : yabai -m display --focus 1
+ctrl + alt - 2 : yabai -m display --focus 2
+ctrl + alt - 3 : yabai -m display --focus 3
+
+# Move window to monitor
+ctrl + alt + shift - 1 : yabai -m window --display 1; yabai -m display --focus 1
+ctrl + alt + shift - 2 : yabai -m window --display 2; yabai -m display --focus 2
+ctrl + alt + shift - 3 : yabai -m window --display 3; yabai -m display --focus 3
+
+# ─────────────────────────────────────────────────────────────────
+# Workspaces (Spaces) - REQUIRES SIP DISABLED
+# With SIP enabled, use macOS native: Ctrl+1-9 (set in Mission Control)
+# ─────────────────────────────────────────────────────────────────
+
+# These only work with SIP disabled:
+# alt - 1 : yabai -m space --focus 1
+# alt - 2 : yabai -m space --focus 2
+# ... etc
+
+# With SIP enabled, create spaces in Mission Control and use:
+# Ctrl + 1/2/3/4 (native macOS keyboard shortcuts)
+# System Settings → Keyboard → Keyboard Shortcuts → Mission Control
+
+# ─────────────────────────────────────────────────────────────────
+# Resize Mode (matching i3: $mod+r to enter, j/k/l/semicolon to resize)
+# ─────────────────────────────────────────────────────────────────
+
+# Enter resize mode
+:: resize @ : echo "resize mode activated"
+
+# Exit resize mode (return or escape)
+resize < escape ; default
+resize < return ; default
+
+# Resize keybindings (active in resize mode)
+resize < j : yabai -m window --resize left:-50:0 || yabai -m window --resize right:-50:0
+resize < 0x29 : yabai -m window --resize right:50:0 || yabai -m window --resize left:50:0  # semicolon
+resize < l : yabai -m window --resize top:0:-50 || yabai -m window --resize bottom:0:-50
+resize < k : yabai -m window --resize bottom:0:50 || yabai -m window --resize top:0:50
+
+# Arrow keys in resize mode
+resize < left : yabai -m window --resize left:-50:0 || yabai -m window --resize right:-50:0
+resize < right : yabai -m window --resize right:50:0 || yabai -m window --resize left:50:0
+resize < up : yabai -m window --resize top:0:-50 || yabai -m window --resize bottom:0:-50
+resize < down : yabai -m window --resize bottom:0:50 || yabai -m window --resize top:0:50
+
+# Activate resize mode (matching i3: $mod+r)
+alt - r ; resize
+
+# ─────────────────────────────────────────────────────────────────
+# Configuration (matching i3: $mod+Shift+c reload, $mod+Shift+r restart)
+# ─────────────────────────────────────────────────────────────────
+
+# Reload yabai (matching i3: $mod+Shift+c)
+alt + shift - c : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
+
+# Restart yabai (matching i3: $mod+Shift+r)
+alt + shift - r : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai" && launchctl kickstart -k "gui/${UID}/homebrew.mxcl.skhd"
+
+# ─────────────────────────────────────────────────────────────────
+# Additional Useful Bindings
+# ─────────────────────────────────────────────────────────────────
+
+# Balance space (distribute windows evenly)
+alt + shift - b : yabai -m space --balance
+
+# Rotate tree
+alt + shift - y : yabai -m space --rotate 270
+alt + shift - x : yabai -m space --rotate 90
+
+# Mirror tree
+alt + shift - m : yabai -m space --mirror y-axis
+alt + shift - n : yabai -m space --mirror x-axis
+
+# ─────────────────────────────────────────────────────────────────
+# Screenshots (matching i3's Print screen bindings)
+# ─────────────────────────────────────────────────────────────────
+
+# Interactive screenshot (like flameshot gui)
+# shift - 0x69 : screencapture -i -c  # Print = 0x69
+
+# Full screen to Pictures
+# shift + ctrl - 0x69 : screencapture ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+
+# Full screen to clipboard  
+# ctrl - 0x69 : screencapture -c

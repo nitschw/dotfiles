@@ -1,0 +1,124 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                    macOS Brewfile                              ║
+# ║   Install with: brew bundle --file=mac/Brewfile               ║
+# ╚════════════════════════════════════════════════════════════════╝
+
+# ─────────────────────────────────────────────────────────────────
+# Taps (third-party repositories)
+# ─────────────────────────────────────────────────────────────────
+tap "homebrew/bundle"
+tap "homebrew/cask-fonts"
+# tap "nikitabobko/tap"           # AeroSpace window manager (disabled - using Magnet)
+# tap "felixkratz/formulae"       # SketchyBar, borders (disabled)
+# tap "koekeishiya/formulae"      # skhd hotkey daemon
+
+# ─────────────────────────────────────────────────────────────────
+# Window Management
+# ─────────────────────────────────────────────────────────────────
+# Using Magnet from App Store instead of i3-style tiling
+# brew "nikitabobko/tap/aerospace"    # Tiling window manager (disabled)
+# brew "felixkratz/formulae/sketchybar"  # Custom menu bar (disabled)
+# brew "felixkratz/formulae/borders"     # Window borders (optional)
+# brew "koekeishiya/formulae/skhd"       # Hotkey daemon (optional)
+
+# ─────────────────────────────────────────────────────────────────
+# Terminal & Shell
+# ─────────────────────────────────────────────────────────────────
+cask "iterm2"                   # Terminal emulator
+brew "tmux"                     # Terminal multiplexer
+brew "zsh-autosuggestions"      # Fish-like autosuggestions
+brew "zsh-syntax-highlighting"  # Syntax highlighting for zsh
+
+# ─────────────────────────────────────────────────────────────────
+# Terminal Power Tools
+# ─────────────────────────────────────────────────────────────────
+brew "bat"                      # Cat with syntax highlighting
+brew "btop"                     # Beautiful resource monitor
+brew "dust"                     # Better du with visuals
+brew "duf"                      # Better df with colors
+brew "eza"                      # Modern ls replacement (was exa)
+brew "fd"                       # Fast find alternative
+brew "fzf"                      # Fuzzy finder
+brew "git-delta"                # Beautiful git diffs
+brew "hyperfine"                # Command benchmarking
+brew "jq"                       # JSON processor
+brew "lazygit"                  # Git TUI
+brew "ncdu"                     # Disk usage analyzer
+brew "ranger"                   # Terminal file manager
+brew "ripgrep"                  # Fast grep (rg)
+brew "tlrc"                     # Simplified man pages (tldr client)
+brew "trash"                    # Safe rm
+brew "tree"                     # Directory tree viewer
+brew "yq"                       # YAML processor
+brew "zoxide"                   # Smarter cd
+
+# ─────────────────────────────────────────────────────────────────
+# Development Tools
+# ─────────────────────────────────────────────────────────────────
+brew "git"
+brew "git-lfs"
+brew "gh"                       # GitHub CLI
+brew "glab"                     # GitLab CLI
+brew "neovim"
+brew "direnv"                   # Per-directory env vars
+brew "pre-commit"
+brew "shellcheck"               # Shell script linter
+brew "shfmt"                    # Shell script formatter
+brew "httpie"                   # Modern HTTP client
+brew "lazydocker"               # Docker TUI
+brew "entr"                     # Run commands on file change
+brew "wget"
+brew "curl"
+
+# ─────────────────────────────────────────────────────────────────
+# Network Tools
+# ─────────────────────────────────────────────────────────────────
+brew "aria2"                    # Multi-connection downloader
+brew "mtr"                      # Better traceroute
+brew "nmap"                     # Network scanner
+brew "speedtest-cli"            # Internet speed test
+
+# ─────────────────────────────────────────────────────────────────
+# Media
+# ─────────────────────────────────────────────────────────────────
+brew "ffmpeg"                   # Video/audio processing
+brew "imagemagick"              # Image manipulation
+brew "mpv"                      # Lightweight video player
+brew "yt-dlp"                   # Download any video
+
+# ─────────────────────────────────────────────────────────────────
+# System Info
+# ─────────────────────────────────────────────────────────────────
+brew "fastfetch"                # System info display
+
+# ─────────────────────────────────────────────────────────────────
+# Fonts
+# ─────────────────────────────────────────────────────────────────
+cask "font-jetbrains-mono-nerd-font"
+cask "font-fantasque-sans-mono-nerd-font"
+cask "font-symbols-only-nerd-font"
+cask "font-fira-code-nerd-font"
+
+# ─────────────────────────────────────────────────────────────────
+# GUI Applications (Casks)
+# ─────────────────────────────────────────────────────────────────
+cask "iterm2"                   # Terminal emulator
+cask "raycast"                  # Launcher (Spotlight/dmenu replacement) - free tier is great
+cask "shottr"                   # Screenshot tool with annotation
+cask "vnc-viewer"               # RealVNC Viewer for remote desktop
+cask "obsidian"                 # Note taking
+cask "vlc"
+# cask "docker"                 # Docker Desktop - install manually if needed
+
+# ─────────────────────────────────────────────────────────────────
+# Optional - Uncomment what you want
+# ─────────────────────────────────────────────────────────────────
+# cask "iterm2"                 # Alternative terminal
+# cask "alacritty"              # Another GPU terminal
+# cask "warp"                   # Modern AI terminal
+# cask "notion"                 # Notes & docs
+# cask "figma"                  # Design tool
+# cask "1password"              # Password manager
+# cask "rectangle"              # Window management (simpler than aerospace)
+# cask "karabiner-elements"     # Keyboard customization
+# cask "alfred"                 # Launcher (Raycast alternative)

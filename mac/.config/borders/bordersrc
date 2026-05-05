@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                    JankyBorders Configuration                  ║
+# ╚════════════════════════════════════════════════════════════════╝
+# Docs: https://github.com/FelixKratz/JankyBorders
+
+# Border options
+options=(
+    style=round
+    width=6.0
+    hidpi=on
+    active_color=0xff89b4fa   # Catppuccin blue for active window
+    inactive_color=0xff45475a # Catppuccin surface1 for inactive
+)
+
+# Start borders with options
+borders "${options[@]}"

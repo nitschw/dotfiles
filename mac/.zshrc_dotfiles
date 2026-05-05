@@ -1,0 +1,723 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                   BEEFCAKE ZSH CONFIG                          ║
+# ║         Full-featured zsh setup for power users                ║
+# ╚════════════════════════════════════════════════════════════════╝
+
+# Dotfiles location
+export DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+export EDITOR="${EDITOR:-nvim}"
+export VISUAL="$EDITOR"
+
+# ═══════════════════════════════════════════════════════════════════
+# PATH Configuration
+# ═══════════════════════════════════════════════════════════════════
+
+# Homebrew (Apple Silicon)
+if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# User binaries
+[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+[[ -d "$HOME/bin" ]] && export PATH="$HOME/bin:$PATH"
+
+# ═══════════════════════════════════════════════════════════════════
+# History Configuration (massive, searchable, deduplicated)
+# ═══════════════════════════════════════════════════════════════════
+
+HISTFILE=~/.zsh_history
+HISTSIZE=100000                  # Lines in memory
+SAVEHIST=100000                  # Lines on disk
+
+setopt EXTENDED_HISTORY          # Save timestamp and duration
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicates first when trimming
+setopt HIST_IGNORE_DUPS          # Don't record consecutive duplicates
+setopt HIST_IGNORE_ALL_DUPS      # Remove older duplicate entries
+setopt HIST_IGNORE_SPACE         # Don't record entries starting with space
+setopt HIST_FIND_NO_DUPS         # Don't show duplicates when searching
+setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
+setopt HIST_VERIFY               # Don't execute immediately on history expansion
+setopt SHARE_HISTORY             # Share history between sessions
+setopt INC_APPEND_HISTORY        # Add commands immediately
+
+# ═══════════════════════════════════════════════════════════════════
+# Shell Options (power user settings)
+# ═══════════════════════════════════════════════════════════════════
+
+setopt AUTO_CD                   # cd by typing directory name
+setopt AUTO_PUSHD                # Push dir to stack on cd
+setopt PUSHD_IGNORE_DUPS         # Don't push duplicates
+setopt PUSHD_SILENT              # Don't print stack after pushd
+setopt CORRECT                   # Spell correction for commands
+setopt CORRECT_ALL               # Spell correction for arguments too
+setopt NO_BEEP                   # No beeping
+setopt EXTENDED_GLOB             # Extended globbing (#, ~, ^)
+setopt NO_CASE_GLOB              # Case insensitive globbing
+setopt GLOB_DOTS                 # Include dotfiles in globbing
+setopt NUMERIC_GLOB_SORT         # Sort numerically when relevant
+setopt INTERACTIVE_COMMENTS      # Allow comments in interactive shell
+setopt MULTIOS                   # Multiple redirections
+setopt NO_FLOW_CONTROL           # Disable Ctrl+S/Ctrl+Q flow control
+
+# ═══════════════════════════════════════════════════════════════════
+# Completion System (tab completion on steroids)
+# ═══════════════════════════════════════════════════════════════════
+
+autoload -Uz compinit
+# Rebuild completion cache once a day
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
+
+# Completion styling
+zstyle ':completion:*' completer _extensions _complete _approximate
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$HOME/.zcompcache"
+
+# Menu selection
+zstyle ':completion:*' menu select
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%F{cyan}── %d ──%f'
+zstyle ':completion:*:messages' format '%F{purple}%d%f'
+zstyle ':completion:*:warnings' format '%F{red}No matches for: %d%f'
+
+# Case insensitive, partial-word, and substring completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+# Colors in completion
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Process completion
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:kill:*' force-list always
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+
+# SSH/SCP completion
+#zstyle ':completion:*:(ssh|scp|rsync):*' hosts ${(f)"$(grep -h '^Host ' ~/.ssh/config ~/.ssh/config.d/* 2>/dev/null | grep -v '\*' | awk '{print $2}')"}
+
+# Directory stack completion
+zstyle ':completion:*:directory-stack' list-colors '=(#b) #([0-9]#)*( *)==95=38;5;12'
+
+# ═══════════════════════════════════════════════════════════════════
+# Key Bindings (vim mode with emacs conveniences)
+# ═══════════════════════════════════════════════════════════════════
+
+bindkey -v                       # Vim mode
+export KEYTIMEOUT=1              # Faster mode switching
+
+# Keep useful emacs bindings
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
+bindkey '^K' kill-line
+bindkey '^U' backward-kill-line
+bindkey '^W' backward-kill-word
+bindkey '^Y' yank
+bindkey '^R' history-incremental-search-backward
+bindkey '^S' history-incremental-search-forward
+bindkey '^P' up-line-or-history
+bindkey '^N' down-line-or-history
+
+# Arrow keys for history search
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+
+# Home/End keys
+bindkey '^[[H' beginning-of-line
+bindkey '^[[F' end-of-line
+bindkey '^[[1~' beginning-of-line
+bindkey '^[[4~' end-of-line
+
+# Delete key
+bindkey '^[[3~' delete-char
+bindkey '^?' backward-delete-char
+
+# Word navigation with Alt+arrows
+bindkey '^[[1;3C' forward-word
+bindkey '^[[1;3D' backward-word
+
+# Edit command in $EDITOR with Ctrl+X Ctrl+E
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+bindkey -M vicmd 'v' edit-command-line
+
+# ═══════════════════════════════════════════════════════════════════
+# Prompt (beautiful, fast, git-aware)
+# ═══════════════════════════════════════════════════════════════════
+
+autoload -Uz vcs_info
+autoload -Uz add-zsh-hook
+
+# Git info configuration
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '%F{red}●%f'
+zstyle ':vcs_info:*' stagedstr '%F{green}●%f'
+zstyle ':vcs_info:git:*' formats '%F{magenta}(%b%f%u%c%F{magenta})%f'
+zstyle ':vcs_info:git:*' actionformats '%F{magenta}(%b%f%u%c%F{magenta}|%F{red}%a%f%F{magenta})%f'
+
+# Update vcs_info before each prompt
+precmd_vcs_info() { vcs_info }
+add-zsh-hook precmd precmd_vcs_info
+
+# Enable prompt substitution
+setopt PROMPT_SUBST
+
+# Vim mode indicator
+vim_ins_mode='%F{cyan}❯%f'
+vim_cmd_mode='%F{green}❮%f'
+vim_mode=$vim_ins_mode
+
+function zle-keymap-select {
+    vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
+    zle reset-prompt
+}
+zle -N zle-keymap-select
+
+function zle-line-finish {
+    vim_mode=$vim_ins_mode
+}
+zle -N zle-line-finish
+
+# The prompt
+# Left: path (git info)
+# Right: execution time, exit code
+PROMPT='%F{blue}%~%f ${vcs_info_msg_0_}
+${vim_mode} '
+
+# Right prompt: last command time and exit status
+RPROMPT='%(?.%F{green}✓%f.%F{red}✗ %?%f) %F{242}%*%f'
+
+# ═══════════════════════════════════════════════════════════════════
+# Command Execution Time
+# ═══════════════════════════════════════════════════════════════════
+
+# Track command execution time
+preexec() {
+    cmd_start_time=$EPOCHSECONDS
+}
+
+precmd_exec_time() {
+    if [[ -n $cmd_start_time ]]; then
+        local elapsed=$((EPOCHSECONDS - cmd_start_time))
+        if [[ $elapsed -ge 5 ]]; then
+            # Format time nicely
+            if [[ $elapsed -ge 3600 ]]; then
+                local hours=$((elapsed / 3600))
+                local mins=$(((elapsed % 3600) / 60))
+                local secs=$((elapsed % 60))
+                RPROMPT="%F{yellow}${hours}h${mins}m${secs}s%f $RPROMPT"
+            elif [[ $elapsed -ge 60 ]]; then
+                local mins=$((elapsed / 60))
+                local secs=$((elapsed % 60))
+                RPROMPT="%F{yellow}${mins}m${secs}s%f $RPROMPT"
+            else
+                RPROMPT="%F{yellow}${elapsed}s%f $RPROMPT"
+            fi
+        fi
+        unset cmd_start_time
+    fi
+}
+add-zsh-hook precmd precmd_exec_time
+
+# ═══════════════════════════════════════════════════════════════════
+# Directory Navigation
+# ═══════════════════════════════════════════════════════════════════
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias -- -='cd -'
+
+# Directory stack shortcuts (pushd/popd)
+alias d='dirs -v'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+# Quick directory bookmarks
+hash -d src=~/src
+hash -d dl=~/Downloads
+hash -d doc=~/Documents
+hash -d dot=$DOTFILES
+hash -d cfg=~/.config
+
+# Usage: cd ~src, cd ~dl, etc.
+
+# ═══════════════════════════════════════════════════════════════════
+# Better Commands (color, safety, convenience)
+# ═══════════════════════════════════════════════════════════════════
+
+# Colorized output
+alias ls='ls -G'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+
+# Safety nets
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ln='ln -i'
+
+# Convenience
+alias mkdir='mkdir -pv'
+alias df='df -h'
+alias du='du -h'
+alias free='vm_stat | perl -ne "/page size of (\d+)/ and \$ps=\$1; /Pages free:\s+(\d+)/ and printf \"Free: %.2f GB\n\", \$1*\$ps/1024/1024/1024"'
+alias path='echo -e ${PATH//:/\\n}'
+alias now='date +"%Y-%m-%d %H:%M:%S"'
+alias week='date +%V'
+alias myip='curl -s ifconfig.me && echo'
+alias localip='ipconfig getifaddr en0'
+
+# ls variations
+alias ll='ls -alFh'
+alias la='ls -A'
+alias l='ls -CF'
+alias ltr='ls -ltrh'           # Sort by time, newest last
+alias lsr='ls -lSrh'           # Sort by size, largest last
+
+# ═══════════════════════════════════════════════════════════════════
+# Modern CLI Replacements (if installed)
+# ═══════════════════════════════════════════════════════════════════
+
+# Neovim
+if command -v nvim &>/dev/null; then
+    alias vim='nvim'
+    alias vi='nvim'
+    alias v='nvim'
+    export EDITOR='nvim'
+fi
+
+# bat - better cat
+if command -v bat &>/dev/null; then
+    alias cat='bat --paging=never'
+    alias catp='bat --plain'
+    alias catl='bat --line-range'
+    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+fi
+
+# eza - better ls
+if command -v eza &>/dev/null; then
+    alias ls='eza --color=auto --icons --group-directories-first'
+    alias ll='eza -la --icons --git --group-directories-first'
+    alias la='eza -a --icons'
+    alias lt='eza --tree --level=2 --icons'
+    alias lta='eza --tree --level=2 --icons -a'
+    alias ltl='eza --tree --level=3 --icons --long'
+fi
+
+# Other modern tools
+command -v duf &>/dev/null && alias df='duf'
+command -v dust &>/dev/null && alias du='dust'
+command -v procs &>/dev/null && alias ps='procs'
+command -v trash &>/dev/null && alias rm='trash'
+command -v delta &>/dev/null && alias diff='delta'
+
+# ═══════════════════════════════════════════════════════════════════
+# Quick Launchers
+# ═══════════════════════════════════════════════════════════════════
+
+command -v fastfetch &>/dev/null && alias ff='fastfetch'
+command -v lazygit &>/dev/null && alias lg='lazygit'
+command -v lazydocker &>/dev/null && alias lzd='lazydocker'
+command -v ncdu &>/dev/null && alias diskuse='ncdu'
+command -v btop &>/dev/null && alias top='btop'
+command -v ranger &>/dev/null && alias r='ranger'
+command -v tldr &>/dev/null && alias help='tldr'
+
+# VNC quick connect
+[[ -x "$HOME/.config/scripts/vnc-connect" ]] && alias vnc='$HOME/.config/scripts/vnc-connect'
+
+# ═══════════════════════════════════════════════════════════════════
+# Git Aliases (extensive)
+# ═══════════════════════════════════════════════════════════════════
+
+alias g='git'
+alias gs='git status -sb'
+alias ga='git add'
+alias gaa='git add --all'
+alias gap='git add --patch'
+alias gc='git commit -v'
+alias gcm='git commit -m'
+alias gca='git commit -v --amend'
+alias gcan='git commit --amend --no-edit'
+alias gp='git push'
+alias gpf='git push --force-with-lease'
+alias gpl='git pull'
+alias gpr='git pull --rebase'
+alias gf='git fetch'
+alias gfa='git fetch --all --prune'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gb='git branch -vv'
+alias gba='git branch -a -vv'
+alias gbd='git branch -d'
+alias gbD='git branch -D'
+alias gl='git log --oneline -15'
+alias gla='git log --oneline --all --graph'
+alias glg='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gst='git stash'
+alias gstp='git stash pop'
+alias gstl='git stash list'
+alias grb='git rebase'
+alias grbi='git rebase -i'
+alias grbc='git rebase --continue'
+alias grba='git rebase --abort'
+alias gm='git merge'
+alias gmt='git mergetool'
+alias gcp='git cherry-pick'
+alias grs='git reset'
+alias grsh='git reset --hard'
+alias gcl='git clone --recurse-submodules'
+alias gclean='git clean -fd'
+alias gwip='git add -A && git commit -m "WIP"'
+alias gunwip='git reset HEAD~1'
+alias gcount='git shortlog -sn'
+
+# ═══════════════════════════════════════════════════════════════════
+# GitHub/GitLab CLI
+# ═══════════════════════════════════════════════════════════════════
+
+if command -v gh &>/dev/null; then
+    alias ghpr='gh pr create'
+    alias ghprs='gh pr list'
+    alias ghprv='gh pr view'
+    alias ghprc='gh pr checkout'
+    alias ghprm='gh pr merge'
+    alias ghis='gh issue list'
+    alias ghic='gh issue create'
+    alias ghiv='gh issue view'
+    alias ghrc='gh repo clone'
+    alias ghrv='gh repo view --web'
+fi
+
+if command -v glab &>/dev/null; then
+    alias glmr='glab mr create'
+    alias glmrs='glab mr list'
+    alias glmrv='glab mr view'
+    alias glci='glab ci status'
+    alias glciv='glab ci view'
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# macOS Specific
+# ═══════════════════════════════════════════════════════════════════
+
+alias ql='qlmanage -p 2>/dev/null'          # Quick Look
+alias pbc='pbcopy'                           # Copy to clipboard
+alias pbp='pbpaste'                          # Paste from clipboard
+alias finder='open -a Finder .'              # Open current dir in Finder
+alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder && echo "DNS cache flushed"'
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES && killall Finder'
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO && killall Finder'
+alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
+alias emptytrash='sudo rm -rf ~/.Trash/*'
+alias cleanup='find . -type f -name "*.DS_Store" -delete'
+
+# ═══════════════════════════════════════════════════════════════════
+# AeroSpace & SketchyBar
+# ═══════════════════════════════════════════════════════════════════
+
+alias aerospace-reload='aerospace reload-config'
+alias aerospace-config='$EDITOR ~/.config/aerospace/aerospace.toml'
+
+alias bar-reload='sketchybar --reload'
+alias bar-config='$EDITOR ~/.config/sketchybar/sketchybarrc'
+alias bar-start='brew services start sketchybar'
+alias bar-stop='brew services stop sketchybar'
+alias bar-restart='brew services restart sketchybar'
+
+# ═══════════════════════════════════════════════════════════════════
+# Useful Functions
+# ═══════════════════════════════════════════════════════════════════
+
+# Create directory and cd into it
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Extract any archive
+extract() {
+    if [[ -f "$1" ]]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.tar.xz)    tar xJf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Find in history
+hg() {
+    fc -ln 0 | grep -i "$@"
+}
+
+# Quick HTTP server
+serve() {
+    local port="${1:-8000}"
+    echo "Serving on http://localhost:$port"
+    python3 -m http.server "$port"
+}
+
+# JSON pretty print
+json() {
+    if [[ -t 0 ]]; then
+        cat "$@" | python3 -m json.tool
+    else
+        python3 -m json.tool
+    fi
+}
+
+# Quick note
+note() {
+    local note_file=~/.notes
+    if [[ $# -eq 0 ]]; then
+        cat "$note_file" 2>/dev/null
+    else
+        echo "$(date '+%Y-%m-%d %H:%M'): $*" >> "$note_file"
+        echo "Note saved."
+    fi
+}
+
+# Weather
+weather() {
+    curl -s "wttr.in/${1:-}?format=3"
+}
+
+# Calculator
+calc() {
+    python3 -c "from math import *; print($*)"
+}
+
+# Find process
+psg() {
+    ps aux | grep -i "$1" | grep -v grep
+}
+
+# Kill by name
+psk() {
+    pkill -9 -if "$1"
+}
+
+# Port checker
+ports() {
+    lsof -i -P -n | grep LISTEN
+}
+
+# What's using a port?
+port() {
+    lsof -i ":$1"
+}
+
+# Open VS Code in current or specified directory
+c() {
+    if [[ $# -eq 0 ]]; then
+        code .
+    else
+        code "$@"
+    fi
+}
+
+# Git clone and cd
+gcld() {
+    git clone "$1" && cd "$(basename "$1" .git)"
+}
+
+# Backup file with timestamp
+bak() {
+    cp "$1" "$1.bak.$(date +%Y%m%d%H%M%S)"
+}
+
+# Diff two files side by side
+sdiff() {
+    diff -y --suppress-common-lines "$1" "$2"
+}
+
+# Quick timer
+timer() {
+    local secs="${1:-60}"
+    echo "Timer: $secs seconds"
+    sleep "$secs" && terminal-notifier -message "Timer done!" -title "⏰ Timer" 2>/dev/null || echo "Timer done!"
+}
+
+# ═══════════════════════════════════════════════════════════════════
+# FZF Configuration (fuzzy finder magic)
+# ═══════════════════════════════════════════════════════════════════
+
+if command -v fzf &>/dev/null; then
+    # FZF options
+    export FZF_DEFAULT_OPTS="
+        --height 60%
+        --layout=reverse
+        --border rounded
+        --info=inline
+        --margin=1
+        --padding=1
+        --preview-window=right:50%:wrap
+        --bind='ctrl-/:toggle-preview'
+        --bind='ctrl-a:select-all'
+        --bind='ctrl-d:deselect-all'
+        --bind='ctrl-y:execute-silent(echo {+} | pbcopy)'
+        --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
+        --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
+        --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
+    "
+
+    # Use fd if available
+    if command -v fd &>/dev/null; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    fi
+
+    # Preview with bat
+    if command -v bat &>/dev/null; then
+        export FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :500 {}'"
+    fi
+
+    # Load fzf keybindings
+    eval "$(fzf --zsh 2>/dev/null)" || true
+
+    # Custom fzf functions
+    # fzf cd into directory
+    fcd() {
+        local dir
+        dir=$(fd --type d --hidden --follow --exclude .git 2>/dev/null | fzf +m --preview 'eza --tree --level=1 --icons {}') && cd "$dir"
+    }
+
+    # fzf edit file
+    fe() {
+        local file
+        file=$(fzf --preview 'bat --color=always --line-range :500 {}') && ${EDITOR:-vim} "$file"
+    }
+
+    # fzf git branch checkout
+    fbr() {
+        local branches branch
+        branches=$(git branch --all | grep -v HEAD) &&
+        branch=$(echo "$branches" | fzf -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+        git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+    }
+
+    # fzf git log browser
+    flog() {
+        git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" |
+        fzf --ansi --no-sort --reverse --tiebreak=index \
+            --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs git show --color=always' \
+            --bind "enter:execute(echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs git show --color=always | less -R)"
+    }
+
+    # fzf kill process
+    fkill() {
+        local pid
+        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+        if [[ -n "$pid" ]]; then
+            echo "$pid" | xargs kill -${1:-9}
+        fi
+    }
+
+    # fzf git add
+    fga() {
+        git status -s | fzf --ansi -m --preview 'git diff --color=always {2}' | awk '{print $2}' | xargs -r git add
+    }
+
+    # fzf history
+    fh() {
+        eval $(fc -ln 0 | fzf +s --tac)
+    }
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# Zoxide (smarter cd)
+# ═══════════════════════════════════════════════════════════════════
+
+if command -v zoxide &>/dev/null; then
+    eval "$(zoxide init zsh)"
+    alias cd='z'
+    alias cdi='zi'
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# Direnv (per-directory env vars)
+# ═══════════════════════════════════════════════════════════════════
+
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
+
+# ═══════════════════════════════════════════════════════════════════
+# iTerm2 Shell Integration (optional)
+# ═══════════════════════════════════════════════════════════════════
+
+if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# Zsh Plugins (via Homebrew)
+# ═══════════════════════════════════════════════════════════════════
+
+# Autosuggestions (fish-like)
+if [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6c7086'
+    ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+    bindkey '^F' autosuggest-accept      # Ctrl+F to accept suggestion
+    bindkey '^[[C' forward-char          # Right arrow accepts char
+fi
+
+# Syntax highlighting (must be last!)
+if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# Final Touches
+# ═══════════════════════════════════════════════════════════════════
+
+# Disable "you have mail" message
+unset MAILCHECK
+
+# Clean up any failed completion
+zstyle ':completion:*' completer _complete _ignored
+
+# Welcome message (optional - remove if annoying)
+if command -v fastfetch &>/dev/null && [[ -z "$VSCODE_INJECTION" ]]; then
+    # Only show in interactive terminal, not in VS Code integrated terminal
+    : # Uncomment below to show fastfetch on shell start
+    # fastfetch --logo small
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# VS Code Compatibility (must come after prompt setup)
+# ═══════════════════════════════════════════════════════════════════
+
+if [[ "$TERM_PROGRAM" == "vscode" ]]; then
+    # Disable vim mode indicator (causes zle reset-prompt issues)
+    function zle-keymap-select { }
+    function zle-line-finish { }
+    # Disable right prompt (dynamic content interferes with terminal reads)
+    RPROMPT=''
+fi
+
+# ═══════════════════════════════════════════════════════════════════
+# Local Overrides (not tracked by git)
+# ═══════════════════════════════════════════════════════════════════
+
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

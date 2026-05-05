@@ -1,0 +1,266 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                 AeroSpace Configuration                        ║
+# ║           Tiling Window Manager for macOS                      ║
+# ║        Replicates i3 keybindings where possible                ║
+# ╚════════════════════════════════════════════════════════════════╝
+# 
+# Docs: https://nikitabobko.github.io/AeroSpace/guide
+# 
+# Key differences from i3:
+# - Uses Alt (Option) as mod key by default (same as i3's Mod1)
+# - No gaps between windows by default (configured below)
+# - Workspaces are numbers 1-9 (like i3)
+# - Some features like scratchpad work differently
+
+# Config version (required for persistent-workspaces)
+config-version = 2
+
+# ─────────────────────────────────────────────────────────────────
+# General Settings
+# ─────────────────────────────────────────────────────────────────
+
+# Start AeroSpace at login
+start-at-login = true
+
+# Automatically tile new windows (important!)
+automatically-unhide-macos-hidden-apps = true
+
+# Default layout for new windows
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Empty workspaces auto-close (no persistent workspaces)
+# Each monitor will keep at least one workspace visible
+persistent-workspaces = []
+
+# Normalizations
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Mouse follows focus - always move mouse to help macOS track active monitor
+on-focus-changed = ['move-mouse window-force-center']
+
+# Notify SketchyBar on workspace change
+exec-on-workspace-change = ['/bin/bash', '-c', 
+    'sketchybar --trigger aerospace_workspace_change INFO="$AEROSPACE_FOCUSED_WORKSPACE"'
+]
+# ─────────────────────────────────────────────────────────────────
+# Multi-Monitor Settings
+# ─────────────────────────────────────────────────────────────────
+# Mouse follows when changing monitors - force move to update macOS focus
+on-focused-monitor-changed = ['move-mouse monitor-force-center']
+
+# Workspaces are dynamic - they appear on whichever monitor is focused
+# when you first switch to them. No force assignments.
+# To check your monitors: aerospace list-monitors
+
+# ─────────────────────────────────────────────────────────────────
+# Gaps & Appearance (matching i3 gaps)
+# ─────────────────────────────────────────────────────────────────
+[gaps]
+inner.horizontal = 7
+inner.vertical = 7
+outer.left = 0
+outer.bottom = 0
+outer.top = 0   # Sketchybar sits in macOS menu bar area
+outer.right = 0
+
+# ─────────────────────────────────────────────────────────────────
+# Main Mode Bindings (matches i3 config)
+# ─────────────────────────────────────────────────────────────────
+[mode.main.binding]
+
+# ─────────────────────────────────────────────────────────────────
+# Application Launchers
+# ─────────────────────────────────────────────────────────────────
+# Terminal (Alt+Enter) - same as i3
+alt-enter = 'exec-and-forget open -na iTerm'
+
+# App launcher (Alt+d) - uses Raycast, similar to dmenu
+# Install Raycast first, or change to Spotlight: 'exec-and-forget open -a "Spotlight"'
+alt-d = 'exec-and-forget open -a "Raycast"'
+
+# Alt+Shift+d for a different launcher mode (like rofi in i3)
+alt-shift-d = 'exec-and-forget open -a "Spotlight"'
+
+# ─────────────────────────────────────────────────────────────────
+# Window Management
+# ─────────────────────────────────────────────────────────────────
+# Kill focused window (Alt+Shift+q) - same as i3
+alt-shift-q = 'close'
+
+# Fullscreen toggle (Alt+f) - same as i3
+alt-f = 'fullscreen'
+
+# ─────────────────────────────────────────────────────────────────
+# Focus Movement (Alt+j/k/l/;) - same as i3
+# ─────────────────────────────────────────────────────────────────
+alt-j = 'focus left'
+alt-k = 'focus down'
+alt-l = 'focus up'
+alt-semicolon = 'focus right'
+
+# Arrow key alternatives
+alt-left = 'focus left'
+alt-down = 'focus down'
+alt-up = 'focus up'
+alt-right = 'focus right'
+
+# ─────────────────────────────────────────────────────────────────
+# Move Windows (Alt+Shift+j/k/l/;) - same as i3
+# ─────────────────────────────────────────────────────────────────
+alt-shift-j = 'move left'
+alt-shift-k = 'move down'
+alt-shift-l = 'move up'
+alt-shift-semicolon = 'move right'
+
+# Arrow key alternatives
+alt-shift-left = 'move left'
+alt-shift-down = 'move down'
+alt-shift-up = 'move up'
+alt-shift-right = 'move right'
+
+# ─────────────────────────────────────────────────────────────────
+# Join Windows (Alt+\ and Alt+-) - AeroSpace equivalent of i3 split
+# Uses join-with which works with normalization enabled
+# ─────────────────────────────────────────────────────────────────
+alt-backslash = 'join-with right'   # Alt+\ join horizontally
+alt-minus = 'join-with down'        # Alt+- join vertically
+
+# ─────────────────────────────────────────────────────────────────
+# Layout Modes
+# ─────────────────────────────────────────────────────────────────
+# Toggle between tiling layouts (Alt+e) - similar to i3's toggle split
+alt-e = 'layout tiles horizontal vertical'
+
+# Toggle accordion (stacking) layout (Alt+s) - similar to i3 stacking
+alt-s = 'layout accordion horizontal vertical'
+
+# ─────────────────────────────────────────────────────────────────
+# Floating Windows (Alt+Shift+Space) - same as i3
+# ─────────────────────────────────────────────────────────────────
+alt-shift-space = 'layout floating tiling'
+
+# Focus floating/tiling toggle (Alt+Space) - same as i3
+alt-space = 'focus-back-and-forth'
+
+# ─────────────────────────────────────────────────────────────────
+# Focus back and forth (Alt+a) - quick switch between last focused
+# Note: i3's 'focus parent' is not supported in AeroSpace
+# ─────────────────────────────────────────────────────────────────
+alt-a = 'focus-back-and-forth'
+
+# ─────────────────────────────────────────────────────────────────
+# Workspaces - Switch (Alt+1-9) - same as i3
+# ─────────────────────────────────────────────────────────────────
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
+
+# ─────────────────────────────────────────────────────────────────
+# Workspaces - Move Window (Alt+Shift+1-9) - same as i3
+# ─────────────────────────────────────────────────────────────────
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+alt-shift-9 = 'move-node-to-workspace 9'
+
+# AUTO-GENERATED-MONITOR-CONFIG-START
+# Workspaces distributed across 2 monitor(s)
+[workspace-to-monitor-force-assignment]
+1 = 'main'
+2 = 'main'
+3 = 'main'
+4 = 'main'
+5 = 'main'
+6 = ['secondary', 'main']
+7 = ['secondary', 'main']
+8 = ['secondary', 'main']
+9 = ['secondary', 'main']
+# AUTO-GENERATED-MONITOR-CONFIG-END
+
+# ─────────────────────────────────────────────────────────────────
+# Resize Mode (Alt+r) - same as i3
+# ─────────────────────────────────────────────────────────────────
+alt-r = 'mode resize'
+
+[mode.resize.binding]
+# Resize with h/j/k/l
+h = 'resize width -50'
+j = 'resize height +50'
+k = 'resize height -50'
+l = 'resize width +50'
+
+# Arrow keys
+left = 'resize width -50'
+down = 'resize height +50'
+up = 'resize height -50'
+right = 'resize width +50'
+
+# Exit resize mode
+enter = 'mode main'
+esc = 'mode main'
+
+# ─────────────────────────────────────────────────────────────────
+# Service Mode (Alt+Shift+c for reload) - like i3's reload
+# ─────────────────────────────────────────────────────────────────
+alt-shift-c = 'reload-config'
+
+# Restart AeroSpace (Alt+Shift+r) - like i3 restart
+alt-shift-r = 'exec-and-forget aerospace reload-config'
+
+# ─────────────────────────────────────────────────────────────────
+# Multi-monitor Support
+# ─────────────────────────────────────────────────────────────────
+# Move focus between monitors
+alt-tab = 'workspace-back-and-forth'
+
+# Move window to next monitor
+alt-shift-m = 'move-node-to-monitor --wrap-around next'
+
+# ─────────────────────────────────────────────────────────────────
+# Application-specific Rules
+# ─────────────────────────────────────────────────────────────────
+
+# CATCH-ALL: Force ALL apps to tile by default
+[[on-window-detected]]
+run = 'layout tiling'
+
+# Exceptions - these apps should float
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+
+# ─────────────────────────────────────────────────────────────────
+# Workspace Assignments (optional - uncomment to use)
+# ─────────────────────────────────────────────────────────────────
+# [[on-window-detected]]
+# if.app-id = 'com.apple.Safari'
+# run = ['move-node-to-workspace 2']
+
+# [[on-window-detected]]
+# if.app-id = 'com.tinyspeck.slackmacgap'
+# run = ['move-node-to-workspace 3']
+
+# [[on-window-detected]]
+# if.app-id = 'com.spotify.client'
+# run = ['move-node-to-workspace 9']

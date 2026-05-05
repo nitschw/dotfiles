@@ -1,0 +1,52 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                      skhd Configuration                        ║
+# ╚════════════════════════════════════════════════════════════════╝
+# Docs: https://github.com/koekeishiya/skhd
+#
+# Note: Most window management is handled by AeroSpace.
+# This config is for additional system hotkeys.
+
+# ═══════════════════════════════════════════════════════════════════
+# Application Launchers
+# ═══════════════════════════════════════════════════════════════════
+
+# Open terminal (iTerm2)
+alt - return : open -a "iTerm"
+
+# Open Finder (new window)
+alt - e : osascript -e 'tell app "Finder" to make new Finder window to home'
+
+# Open browser (Firefox Developer Edition)
+alt - b : open -a "Firefox Developer Edition"
+
+# ═══════════════════════════════════════════════════════════════════
+# System Controls
+# ═══════════════════════════════════════════════════════════════════
+
+# Lock screen
+ctrl + alt - l : pmset displaysleepnow
+
+# Screenshot - selection to clipboard (macOS native)
+alt - s : screencapture -ic
+
+# Screenshot - selection to file
+alt + shift - s : screencapture -i ~/Desktop/screenshot-$(date +%Y%m%d-%H%M%S).png
+
+# Screenshot - open in Preview for annotation
+alt + ctrl - s : screencapture -i -P
+
+# ═══════════════════════════════════════════════════════════════════
+# SketchyBar Controls
+# ═══════════════════════════════════════════════════════════════════
+
+# Reload sketchybar
+ctrl + alt - r : sketchybar --reload
+
+# ═══════════════════════════════════════════════════════════════════
+# Media Controls (if you want dedicated keys)
+# ═══════════════════════════════════════════════════════════════════
+
+# These work with Spotify, Apple Music, etc.
+# alt - p : osascript -e 'tell application "System Events" to key code 16 using control down' # play/pause
+# alt - n : osascript -e 'tell application "System Events" to key code 17 using control down' # next
+# alt - m : osascript -e 'tell application "System Events" to key code 11 using control down' # previous

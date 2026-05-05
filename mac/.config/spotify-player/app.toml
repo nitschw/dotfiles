@@ -1,0 +1,53 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                 Spotify Player Configuration                   ║
+# ╚════════════════════════════════════════════════════════════════╝
+# Docs: https://github.com/aome510/spotify-player
+
+# Client ID (default public one, replace with your own for better rate limits)
+# client_id = "your_spotify_client_id"
+
+# Enable streaming - this makes spotify_player a playback device!
+# Options: true, false, "Always", "DaemonOnly"
+enable_streaming = true
+
+# Playback settings
+[device]
+name = "spotify-player"
+device_type = "computer"
+volume = 70
+bitrate = 320
+audio_cache = true
+
+# Appearance
+[app_config]
+theme = "default"
+# Image rendering (works in iTerm2, kitty, etc.)
+cover_image_width = 20
+
+# Playback behavior  
+playback_window_position = "Bottom"
+copy_command = { command = "pbcopy", args = [] }
+tracks_playback_limit = 50
+
+# Notify on track change (macOS native)
+notify = true
+notify_format = { summary = "{track}", body = "{artists} - {album}" }
+
+# Keybindings (vim-style, similar to your i3/aerospace setup)
+[keymap]
+# These are the defaults, customize as needed:
+# q = quit
+# space = toggle playback
+# n = next track
+# p = previous track  
+# + = volume up
+# - = volume down
+# s = toggle shuffle
+# r = cycle repeat mode
+# / = open search
+# g g = go to start
+# G = go to end
+# j/k = navigate down/up
+# h/l = seek backward/forward
+# Enter = select/play
+# Tab = switch focus

@@ -1,0 +1,30 @@
+# ╔════════════════════════════════════════════════════════════════╗
+# ║                    ncspot Configuration                        ║
+# ╚════════════════════════════════════════════════════════════════╝
+# Docs: https://github.com/hrkfdn/ncspot/blob/main/doc/users.md
+#
+# ncspot is a STANDALONE Spotify client - it plays music directly
+# through your Mac speakers. No Spotify app or daemon required!
+
+# Playback behavior
+gapless = true
+notify = true
+use_nerdfont = true
+
+# Default keybindings (vim-style):
+#   q/Q      = quit
+#   space    = toggle playback
+#   n/p      = next/previous track
+#   s        = save/unsave track
+#   /        = search
+#   Enter    = play selected
+#   >/<      = seek forward/backward
+#   +/-      = volume up/down
+#   r        = toggle repeat
+#   z        = toggle shuffle
+#   Shift+o  = open album
+#   Shift+a  = open artist
+#   F1       = queue view
+#   F2       = search view
+#   F3       = library view
+#   ?        = help
